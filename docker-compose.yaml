@@ -362,7 +362,78 @@ services:
       volumes:
         - ./notebooks:/home/jovyan/work/notebooks/
         - ./spark/resources/data:/home/jovyan/work/data/
-        - ./spark/resources/jars:/home/jovyan/work/jars/     
+        - ./spark/resources/jars:/home/jovyan/work/jars/
+  # mongo:
+  #     container_name: mongo1
+  #     hostname: mongo1
+  #     image: mongo:5.0.3
+  #     restart: always
+  #     ports:
+  #         - "27017:27017"
+  #     volumes:
+  #         - mongo_data:/data/db
+  #     networks:
+  #         - default_net
+  # mongo-express:
+  #     container_name: mongo-express1
+  #     hostname: mongo-express1
+  #     image: mongo-express:0.54.0
+  #     depends_on:
+  #         - mongo
+  #     restart: always
+  #     ports:
+  #         - 8081:8081
+  #     environment:
+  #         ME_CONFIG_MONGODB_URL: mongodb://mongo1:27017/
+  #     networks:
+  #         - default_net
+  
+  # elastic:
+  #     container_name: elastic
+  #     hostname: elastic
+  #     tty: True
+  #     image: docker.elastic.co/elasticsearch/elasticsearch:7.14.2
+  #     restart: always
+  #     environment:
+  #         cluster.name: "es-docker"
+  #         discovery.type: single-node
+  #         node.name: "elastic"
+  #         ES_JAVA_OPTS: "-Xms1024m -Xmx1024m"
+  #     ports:
+  #         - "9200:9200"
+  #     ulimits:
+  #         memlock:
+  #             soft: -1
+  #             hard: -1
+  #     volumes:
+  #         - elastic_data:/usr/share/elasticsearch/data
+  #         - ./logs:/usr/share/elasticsearch/logs
+  #     networks:
+  #         - default_net
+
+  # zookeeper:
+  #     container_name: zookeeper1
+  #     hostname: zookeeper1
+  #     image: wurstmeister/zookeeper
+  #     ports:
+  #         - "2181:2181"
+  #     networks:
+  #         - default_net
+
+  # kafka:
+  #     container_name: kafka1
+  #     hostname: kafka1
+  #     image: wurstmeister/kafka:2.12-2.0.1
+  #     ports:
+  #         - "9092:9092"
+  #     environment:
+  #         DOCKER_API_VERSION: 1.22
+  #         KAFKA_ADVERTISED_HOST_NAME: kafka
+  #         KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+  #     networks:
+  #         - default_net
+  #     volumes:
+  #         - /var/run/docker.sock:/var/run/docker.sock     
 
 volumes:
   postgres-db-volume:
