@@ -1,3 +1,9 @@
 logs/
 notebooks/ch04/
+notebooks/.ipynb_checkpoints
+notebooks/.vscode
 .env
+.idea
+/devcontainer
+spark/app/modules/__pycache__
+dags/__pycache__
