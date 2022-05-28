@@ -4,6 +4,6 @@ notebooks/.ipynb_checkpoints
 notebooks/.vscode
 .env
 .idea
-/devcontainer
+.devcontainer
 spark/app/modules/__pycache__
 dags/__pycache__
