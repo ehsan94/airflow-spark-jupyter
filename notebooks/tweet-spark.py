@@ -51,6 +51,9 @@ if __name__ == "__main__":
                 StructField('statuses_count', StringType(), True),
                 StructField('created_at', StringType(), True)
                 ])),
+             StructField('entities', StructType([
+                StructField('hashtags', ArrayType(StringType()), True)
+             ])),
             StructField('created_at', StringType(), True),
             StructField('retweet_count', StringType(), True)
             ])
@@ -60,10 +63,11 @@ if __name__ == "__main__":
     
     df.printSchema()
 
-    df2 = df.select(col('user.*'), col('created_at'), col('retweet_count'))
+    df2 = df.select(col('user.*'), col('entities.*'), col('created_at'), col('retweet_count'))
+    
     df2.printSchema()
 
-    df2 = df2.repartition(100)
+    df2 = df2.repartition(1)
 
     # query = df2.writeStream.queryName("all_tweets_new")\
     #     .outputMode("append").format("parquet")\
@@ -75,5 +79,5 @@ if __name__ == "__main__":
 
     query = df2.writeStream.format('console').option('truncate', 'False').start()
     import time
-    time.sleep(10)
+    time.sleep(30)
     query.stop()
