@@ -7,3 +7,5 @@ notebooks/.vscode
 .devcontainer
 spark/app/modules/__pycache__
 dags/__pycache__
+parc/
+check/

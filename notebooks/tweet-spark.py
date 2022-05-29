@@ -41,15 +41,39 @@ if __name__ == "__main__":
     # # text classification to define polarity and subjectivity
     # words = text_classification(words)
 
-    schema = StructType().add('text', StringType(), False).add('created_at', StringType(), False).add('id_str', StringType(), False)
-    words = lines.selectExpr('CAST(value AS STRING)').select(from_json('value', schema).alias('temp')).select('temp.*')
+    structureSchema = StructType([
+            StructField('user', StructType([
+                StructField('screen_name', StringType(), True),
+                StructField('description', StringType(), True),
+                StructField('location', StringType(), True),
+                StructField('friends_count', StringType(), True),
+                StructField('followers_count', StringType(), True),
+                StructField('statuses_count', StringType(), True),
+                StructField('created_at', StringType(), True)
+                ])),
+            StructField('created_at', StringType(), True),
+            StructField('retweet_count', StringType(), True)
+            ])
 
+    schema = StructType().add('text', StringType(), False).add('created_at', StringType(), False).add('id_str', StringType(), False).add('id_str', StringType(), False)
+    df = lines.selectExpr('CAST(value AS STRING)').select(from_json('value', structureSchema).alias('temp')).select('temp.*')
+    
+    df.printSchema()
 
-    words = words.repartition(200)
-    query = words.writeStream.queryName("all_tweets_new")\
-        .outputMode("append").format("parquet")\
-        .option("path", "./parc")\
-        .option("checkpointLocation", "./check")\
-        .trigger(processingTime='60 seconds').start()
+    df2 = df.select(col('user.*'), col('created_at'), col('retweet_count'))
+    df2.printSchema()
 
-    query.awaitTermination()
+    df2 = df2.repartition(100)
+
+    # query = df2.writeStream.queryName("all_tweets_new")\
+    #     .outputMode("append").format("parquet")\
+    #     .option("path", "./parc")\
+    #     .option("checkpointLocation", "./check")\
+    #     .trigger(processingTime='60 seconds').start()
+
+    # query.awaitTermination()
+
+    query = df2.writeStream.format('console').option('truncate', 'False').start()
+    import time
+    time.sleep(10)
+    query.stop()
