@@ -148,7 +148,7 @@ if __name__ == "__main__":
             .withColumn(col, expr('concat_ws(" ", array_distinct(temp2))')) \
             .drop('temp1', 'temp2')
     
-
+ 
     df2.printSchema()
 
     df2 = df2.repartition(1)
@@ -157,12 +157,19 @@ if __name__ == "__main__":
     #     .outputMode("append").format("parquet")\
     #     .option("path", "./parc")\
     #     .option("checkpointLocation", "./check")\
-    #     .trigger(processingTime='60 seconds').start()
+    #     .trigger(processingTime='480 seconds').start()
 
-    # query.awaitTermination()
+    query = df2.writeStream.queryName("all_tweets_new")\
+        .outputMode("append").format("parquet")\
+        .option("path", "/home/jovyan/work/data/parc/")\
+        .option("checkpointLocation", "/home/jovyan/work/data/check")\
+        .trigger(processingTime='480 seconds').start()
+
+
+    query.awaitTermination()
 
     # To print on console
-    query = df2.writeStream.format('console').option('truncate', 'False').start()
-    import time
-    time.sleep(30)
-    query.stop()
+    # query = df2.writeStream.format('console').option('truncate', 'False').start()
+    # import time
+    # time.sleep(30)
+    # query.stop()
